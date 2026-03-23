@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Classical Music Tracker 95</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', sans-serif;
+  background: #008080;
+  padding: 20px;
+  font-size: 11px;
+}
+
+.window {
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  box-shadow: 2px 2px 0 #000;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title-bar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-text {
+  color: #fff;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.title-icon {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 1px solid #000;
+}
+
+.window-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.window-btn {
+  width: 16px;
+  height: 14px;
+  background: #c0c0c0;
+  border: 1px outset #fff;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 2px;
+}
+
+.window-btn:active {
+  border-style: inset;
+}
+
+.menu-bar {
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  padding: 2px;
+  display: flex;
+  gap: 8px;
+}
+
+.menu-item {
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #000080;
+  color: #fff;
+}
+
+.content {
+  padding: 8px;
+  background: #c0c0c0;
+}
+
+.form-section {
+  background: #c0c0c0;
+  border: 2px groove #fff;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.fieldset {
+  border: 1px groove #808080;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.fieldset legend {
+  padding: 0 4px;
+  font-weight: bold;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.form-label {
+  text-align: right;
+  padding-right: 4px;
+}
+
+.form-input {
+  background: #fff;
+  border: 1px inset #808080;
+  padding: 2px 4px;
+  font-family: 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+}
+
+select.form-input {
+  background: #fff;
+  border: 1px inset #808080;
+  padding: 2px;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #000 50%), linear-gradient(135deg, #000 50%, transparent 50%);
+  background-position: calc(100% - 8px) calc(50% - 1px), calc(100% - 4px) calc(50% - 1px);
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  padding-right: 20px;
+}
+
+.button {
+  background: #c0c0c0;
+  border: 2px outset #fff;
+  padding: 4px 12px;
+  font-family: 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  min-width: 75px;
+}
+
+.button:active {
+  border-style: inset;
+  padding: 5px 11px 3px 13px;
+}
+
+.button-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.list-container {
+  background: #fff;
+  border: 2px inset #808080;
+  height: 300px;
+  overflow-y: scroll;
+  margin-top: 8px;
+}
+
+.list-header {
+  display: grid;
+  grid-template-columns: 250px 120px 120px 100px 60px 150px 60px;
+  background: #c0c0c0;
+  border-bottom: 1px solid #808080;
+  padding: 4px;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+}
+
+.list-item {
+  display: grid;
+  grid-template-columns: 250px 120px 120px 100px 60px 150px 60px;
+  padding: 4px;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+}
+
+.list-item:hover {
+  background: #000080;
+  color: #fff;
+}
+
+.list-item.selected {
+  background: #000080;
+  color: #fff;
+}
+
+.status-bar {
+  background: #c0c0c0;
+  border-top: 1px solid #fff;
+  padding: 2px 4px;
+  display: flex;
+  gap: 2px;
+}
+
+.status-panel {
+  border: 1px inset #808080;
+  padding: 2px 4px;
+  flex: 1;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #808080;
+}
+
+.header-cell {
+  border-right: 1px solid #808080;
+  padding: 0 4px;
+}
+
+.list-cell {
+  border-right: 1px solid #e0e0e0;
+  padding: 0 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-item:hover .list-cell {
+  border-color: #1084d0;
+}
+</style>
+</head>
+<body>
+
+<div class="window">
+  <div class="title-bar">
+    <div class="title-text">
+      <div class="title-icon">🎵</div>
+      Classical Music Tracker 95
+    </div>
+    <div class="window-controls">
+      <div class="window-btn">_</div>
+      <div class="window-btn">□</div>
+      <div class="window-btn">×</div>
+    </div>
+  </div>
+
+  <div class="menu-bar">
+    <div class="menu-item">File</div>
+    <div class="menu-item">Edit</div>
+    <div class="menu-item">View</div>
+    <div class="menu-item">Help</div>
+    <div class="menu-item" onclick="exportJSON()">Export JSON</div>
+    <div class="menu-item" onclick="document.getElementById('importFile').click()">Import JSON</div>
+  </div>
+  <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importJSON(event)">
+
+  <div class="content">
+    <div class="form-section">
+      <fieldset class="fieldset">
+        <legend>Recording Details</legend>
+        
+        <div class="form-row">
+          <label class="form-label">Work:</label>
+          <input type="text" class="form-input" id="work" placeholder="Symphony No. 5 in C minor, Op. 67">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Composer:</label>
+          <input type="text" class="form-input" id="composer" placeholder="Beethoven">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Conductor:</label>
+          <input type="text" class="form-input" id="conductor" placeholder="Herbert von Karajan">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Soloist:</label>
+          <input type="text" class="form-input" id="soloist" placeholder="Optional">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Orchestra/Ensemble:</label>
+          <input type="text" class="form-input" id="ensemble" placeholder="Berlin Philharmonic">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Record Label:</label>
+          <input type="text" class="form-input" id="label" placeholder="Deutsche Grammophon">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Year of Release:</label>
+          <input type="text" class="form-input" id="year" placeholder="1963">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Album:</label>
+          <input type="text" class="form-input" id="album" placeholder="Optional">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Rating:</label>
+          <select class="form-input" id="rating">
+            <option value="">Select rating</option>
+            <option value="10">10 - Masterpiece</option>
+            <option value="9">9 - Excellent</option>
+            <option value="8">8 - Very Good</option>
+            <option value="7">7 - Good</option>
+            <option value="6">6 - Above Average</option>
+            <option value="5">5 - Average</option>
+            <option value="4">4 - Below Average</option>
+            <option value="3">3 - Poor</option>
+            <option value="2">2 - Very Poor</option>
+            <option value="1">1 - Terrible</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Date Listened:</label>
+          <input type="date" class="form-input" id="dateListened">
+        </div>
+      </fieldset>
+
+      <div class="button-row">
+        <button class="button" onclick="addEntry()">Add Entry</button>
+        <button class="button" onclick="updateEntry()">Update Entry</button>
+        <button class="button" onclick="deleteEntry()">Delete Entry</button>
+        <button class="button" onclick="clearForm()">Clear Form</button>
+      </div>
+    </div>
+
+    <div class="list-container" id="listContainer">
+      <div class="list-header">
+        <div class="header-cell">Work</div>
+        <div class="header-cell">Composer</div>
+        <div class="header-cell">Conductor</div>
+        <div class="header-cell">Label</div>
+        <div class="header-cell">Year</div>
+        <div class="header-cell">Album</div>
+        <div class="header-cell">Rating</div>
+      </div>
+      <div id="entriesList">
+        <div class="empty-state">No entries yet. Add your first listening session above!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-panel" id="statusText">Ready</div>
+    <div class="status-panel" style="flex: 0 0 100px; text-align: center;" id="entryCount">0 entries</div>
+  </div>
+</div>
+
+<script type="module">
+// Firebase configuration - REPLACE WITH YOUR OWN CONFIG
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import { getDatabase, ref, set, get, remove } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD46mQEC3UNj12uiPnN_450zCHLUTITNoE",
+  authDomain: "classical-music-tracker.firebaseapp.com",
+  databaseURL: "https://classical-music-tracker-default-rtdb.firebaseio.com",
+  projectId: "classical-music-tracker",
+  storageBucket: "classical-music-tracker.firebasestorage.app",
+  messagingSenderId: "434986382876",
+  appId: "1:434986382876:web:353bbe88d85029646311d9"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+let entries = [];
+let selectedIndex = -1;
+
+async function loadEntries() {
+  try {
+    const snapshot = await get(ref(database, 'entries'));
+    if (snapshot.exists()) {
+      entries = snapshot.val() || [];
+      renderEntries();
+    }
+  } catch (e) {
+    console.error('Failed to load:', e);
+    setStatus('Error loading entries');
+  }
+}
+
+async function saveEntries() {
+  try {
+    await set(ref(database, 'entries'), entries);
+  } catch (e) {
+    console.error('Failed to save:', e);
+    setStatus('Error saving entries');
+  }
+}
+
+function renderEntries() {
+  const container = document.getElementById('entriesList');
+  
+  if (entries.length === 0) {
+    container.innerHTML = '<div class="empty-state">No entries yet. Add your first listening session above!</div>';
+    document.getElementById('entryCount').textContent = '0 entries';
+    return;
+  }
+
+  container.innerHTML = entries.map((entry, index) => `
+    <div class="list-item ${index === selectedIndex ? 'selected' : ''}" onclick="selectEntry(${index})">
+      <div class="list-cell" title="${entry.work}">${entry.work}</div>
+      <div class="list-cell" title="${entry.composer}">${entry.composer}</div>
+      <div class="list-cell" title="${entry.conductor}">${entry.conductor}</div>
+      <div class="list-cell" title="${entry.label}">${entry.label}</div>
+      <div class="list-cell" title="${entry.year}">${entry.year}</div>
+      <div class="list-cell" title="${entry.album || ''}">${entry.album || '-'}</div>
+      <div class="list-cell">${entry.rating || '-'}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('entryCount').textContent = `${entries.length} ${entries.length === 1 ? 'entry' : 'entries'}`;
+}
+
+function selectEntry(index) {
+  selectedIndex = index;
+  const entry = entries[index];
+  
+  document.getElementById('work').value = entry.work;
+  document.getElementById('composer').value = entry.composer;
+  document.getElementById('conductor').value = entry.conductor;
+  document.getElementById('soloist').value = entry.soloist || '';
+  document.getElementById('ensemble').value = entry.ensemble;
+  document.getElementById('label').value = entry.label;
+  document.getElementById('year').value = entry.year;
+  document.getElementById('album').value = entry.album || '';
+  document.getElementById('rating').value = entry.rating || '';
+  document.getElementById('dateListened').value = entry.dateListened || '';
+  
+  renderEntries();
+  setStatus(`Selected: ${entry.work} - ${entry.composer}`);
+}
+
+function addEntry() {
+  const work = document.getElementById('work').value.trim();
+  const composer = document.getElementById('composer').value.trim();
+  const conductor = document.getElementById('conductor').value.trim();
+  
+  if (!work || !composer || !conductor) {
+    alert('Please fill in at least Work, Composer, and Conductor fields.');
+    return;
+  }
+
+  const entry = {
+    work,
+    composer,
+    conductor,
+    soloist: document.getElementById('soloist').value.trim(),
+    ensemble: document.getElementById('ensemble').value.trim(),
+    label: document.getElementById('label').value.trim(),
+    year: document.getElementById('year').value.trim(),
+    album: document.getElementById('album').value.trim(),
+    rating: document.getElementById('rating').value,
+    dateListened: document.getElementById('dateListened').value,
+    timestamp: new Date().toISOString()
+  };
+
+  entries.unshift(entry);
+  saveEntries();
+  renderEntries();
+  clearForm();
+  setStatus('Entry added successfully');
+}
+
+function updateEntry() {
+  if (selectedIndex === -1) {
+    alert('Please select an entry to update.');
+    return;
+  }
+
+  const work = document.getElementById('work').value.trim();
+  const composer = document.getElementById('composer').value.trim();
+  const conductor = document.getElementById('conductor').value.trim();
+  
+  if (!work || !composer || !conductor) {
+    alert('Please fill in at least Work, Composer, and Conductor fields.');
+    return;
+  }
+
+  entries[selectedIndex] = {
+    work,
+    composer,
+    conductor,
+    soloist: document.getElementById('soloist').value.trim(),
+    ensemble: document.getElementById('ensemble').value.trim(),
+    label: document.getElementById('label').value.trim(),
+    year: document.getElementById('year').value.trim(),
+    album: document.getElementById('album').value.trim(),
+    rating: document.getElementById('rating').value,
+    dateListened: document.getElementById('dateListened').value,
+    timestamp: entries[selectedIndex].timestamp
+  };
+
+  saveEntries();
+  renderEntries();
+  setStatus('Entry updated successfully');
+}
+
+function deleteEntry() {
+  if (selectedIndex === -1) {
+    alert('Please select an entry to delete.');
+    return;
+  }
+
+  if (confirm('Are you sure you want to delete this entry?')) {
+    entries.splice(selectedIndex, 1);
+    saveEntries();
+    clearForm();
+    selectedIndex = -1;
+    renderEntries();
+    setStatus('Entry deleted');
+  }
+}
+
+function clearForm() {
+  document.getElementById('work').value = '';
+  document.getElementById('composer').value = '';
+  document.getElementById('conductor').value = '';
+  document.getElementById('soloist').value = '';
+  document.getElementById('ensemble').value = '';
+  document.getElementById('label').value = '';
+  document.getElementById('year').value = '';
+  document.getElementById('album').value = '';
+  document.getElementById('rating').value = '';
+  document.getElementById('dateListened').value = '';
+  selectedIndex = -1;
+  renderEntries();
+  setStatus('Form cleared');
+}
+
+function exportJSON() {
+  const dataStr = JSON.stringify(entries, null, 2);
+  const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'classical-music-tracker-export.json';
+  link.click();
+  URL.revokeObjectURL(url);
+  setStatus('Exported to JSON file');
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      
+      if (!Array.isArray(imported)) {
+        alert('Invalid JSON format. Expected an array of entries.');
+        return;
+      }
+      
+      if (confirm(`Import ${imported.length} entries? This will add to your existing entries.`)) {
+        entries = [...entries, ...imported];
+        await saveEntries();
+        renderEntries();
+        setStatus(`Imported ${imported.length} entries`);
+      }
+    } catch (error) {
+      alert('Error reading JSON file: ' + error.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // Reset file input
+}
+
+function setStatus(text) {
+  document.getElementById('statusText').textContent = text;
+  setTimeout(() => {
+    document.getElementById('statusText').textContent = 'Ready';
+  }, 3000);
+}
+
+document.getElementById('dateListened').valueAsDate = new Date();
+loadEntries();
+</script>
+
+</body>
+</html>
